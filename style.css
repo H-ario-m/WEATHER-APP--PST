@@ -1,97 +1,140 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
 
 body {
-  background: #8C52FF;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  margin: 0;
+    background: linear-gradient( #c36565, #D8BFD8);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-height: 100vh; */
 }
 
-#weather-container {
-  background: rgba(255, 255, 255, 0.3);
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
+.container {
+    width: 90%;
+    max-width: 1600px
+    text-align: center;
+    padding: 20px;
 }
 
-h2, label, p {
-  color: #fff;
-  margin: 8px 0;
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
 }
 
-input {
-  width: calc(100% - 16px);
-  padding: 8px;
-  box-sizing: border-box;
-  border-radius: 10px;
-  border: 1px solid white;
-  margin-top: 20px;
+.search-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 250px;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
 }
 
 button {
-  background: #debff4;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 20px;
-  width: 100px;
-  font-size: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background-color: #FF8C00;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
 }
 
 button:hover {
-  background: #8b48d7;
+    background-color: #e07e00;
 }
 
-#temp-div p {
-  font-size: 60px;
-  margin-top: -30px;
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; 
+    grid-gap: 15px;
 }
 
-#weather-info {
-  font-size: 20px;
+.main-section {
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    grid-gap: 15px;
 }
 
-#weather-icon {
-  width: 200px;
-  height: 200px;
-  margin: 0 auto 10px; 
-  margin-bottom: 0;
-  display: none;
+.row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
 }
 
-#hourly-forecast {
-  margin-top: 50px;
-  overflow-x: auto;
-  white-space: nowrap;
-  display: flex;
-  justify-content: space-between;
+.box {
+    border-radius: 12px;
+    padding: 15px;
+    color: #333;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-.hourly-item {
-  flex: 0 0 auto;
-  width: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 10px;
-  color: white;
+.large-box {
+    height: 200px;
+    /* grid-row: span 2; */
+    width: auto;
 }
 
-.hourly-item img {
-  width: 30px;
-  height: 30px;
-  margin-bottom: 5px;
+.vertical-box {
+    /* grid-column: span 2; */
+    /* grid-row: span 2;  */
+    height: 1000px;
 }
 
-#hourly-heading {
-  color: #fff;
-  margin-top: 10px;
+#box3 {
+    height: 400px;
 }
+
+.hourly-forecast {
+    display: flex;
+    flex-wrap: nowrap; /* Ensures items are laid out horizontally */
+    overflow-x: auto; /* Allows horizontal scrolling if needed */
+    padding: 10px 0;
+    height: 150px; /* Fixed height for uniformity */
+    gap: 10px; /* Adds spacing between blocks */
+}
+
+.hourly-forecast div {
+    flex: 0 0 120px; /* Ensures each block has a fixed width */
+    height: 100%; /* Matches the parent's fixed height */
+    background: rgba(255, 255, 255, 0.3); /* Semi-transparent background */
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Vertically align content within each block */
+    justify-content: center; /* Center content */
+}
+
+
+.daily-forecast {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.daily-forecast div {
+    /* flex: 0 0 calc(50% - 10px); */
+    margin: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    /* padding: 10px; */
+    text-align: center;
+}
+
