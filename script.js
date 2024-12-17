@@ -3,6 +3,7 @@ const API_KEY = '3fa916b42bfce07d8483560a882561ad';
 const citySearch = document.getElementById('city');
 const searchBtn = document.getElementById('search-btn');
 const box1 = document.getElementById('box1'); 
+const box2 = document.getElementById('box2'); 
 const box3 = document.getElementById('box3'); 
 const box4 = document.getElementById('box4'); 
 const box5 = document.getElementById('box5'); 
@@ -22,6 +23,7 @@ async function fetchWeatherData(cityName) {
         if (response.ok) {
             displayWeather(data);
             fetchHourlyAndDailyForecast(data.coord.lat, data.coord.lon);
+            fetchAirQualityAndMoonPhase(data.coord.lat, data.coord.lon); 
         } else {
             throw new Error(data.message || 'Failed to fetch weather data');
         }
@@ -48,6 +50,52 @@ async function fetchHourlyAndDailyForecast(lat, lon) {
     }
 }
 
+async function fetchAirQualityAndMoonPhase(lat, lon) {
+    try {
+     
+        const aqiResponse = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`);
+        const aqiData = await aqiResponse.json();
+
+        const aqi = aqiData.list[0].main.aqi;
+        const aqiDescription = getAQIDescription(aqi);
+
+     
+        const moonPhase = getMoonPhase();
+
+        box2.innerHTML = `
+            <h3>Air Quality & Moon Phase</h3>
+            <p><strong>Air Quality Index:</strong> ${aqi}</p>
+            <p><strong>Condition:</strong> ${aqiDescription}</p>
+            <p><strong>Moon Phase:</strong> ${moonPhase}</p>
+        `;
+    } catch (error) {
+        console.error('Error fetching AQI or Moon Phase:', error);
+        box2.innerHTML = '<p>Error fetching air quality or moon phase data.</p>';
+    }
+}
+
+function getAQIDescription(aqi) {
+    if (aqi === 1) return 'Good 🟢';
+    if (aqi === 2) return 'Fair 🟡';
+    if (aqi === 3) return 'Moderate 🟠';
+    if (aqi === 4) return 'Poor 🔴';
+    if (aqi === 5) return 'Very Poor ⚫';
+    return 'Unknown';
+}
+
+function getMoonPhase() {
+    const date = new Date();
+    const lp = 2551443; // Lunar cycle in seconds
+    const newMoon = new Date(1970, 0, 7, 20, 35, 0);
+    const phase = (((date.getTime() - newMoon.getTime()) / 1000) % lp) / lp;
+
+    if (phase < 0.03 || phase > 0.97) return 'New Moon 🌑';
+    if (phase < 0.25) return 'Waxing Crescent 🌒';
+    if (phase < 0.50) return 'First Quarter 🌓';
+    if (phase < 0.75) return 'Waxing Gibbous 🌔';
+    return 'Full Moon 🌕';
+}
+
 async function fetchWeatherByCoordinates(lat, lon) {
     try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
@@ -55,6 +103,7 @@ async function fetchWeatherByCoordinates(lat, lon) {
         if (response.ok) {
             displayWeather(data);
             fetchHourlyAndDailyForecast(lat, lon); 
+            fetchAirQualityAndMoonPhase(lat, lon); 
         } else {
             throw new Error(data.message || 'Failed to fetch weather data');
         }
@@ -77,6 +126,7 @@ function displayWeather(data) {
         <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon">
     `;
 }
+
 function displayHourlyForecast(data) {
     box4.innerHTML = '<h3>Hourly Forecast:</h3>';
     const hourlyContainer = document.createElement('div');
@@ -97,7 +147,6 @@ function displayHourlyForecast(data) {
     });
     box4.appendChild(hourlyContainer);
 }
-
 
 function displayDailyForecast(data) {
     box5.innerHTML = '<h3>8-Day Forecast:</h3>';
@@ -142,9 +191,9 @@ searchBtn.addEventListener('click', () => {
         box1.innerHTML = '<p>Please enter a city name.</p>';
     }
 });
+
 map.on('click', async function (e) {
     const lat = e.latlng.lat;
     const lon = e.latlng.lng;
     fetchWeatherByCoordinates(lat, lon);
 });
-
