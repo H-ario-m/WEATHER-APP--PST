@@ -137,12 +137,3 @@ button:hover {
     /* padding: 10px; */
     text-align: center;
 }
-body {
-    background-image: url('sky-with-cloud.jpg'); /* Update the path */
-    background-size: cover; /* Cover the entire viewport */
-    background-position: center; /* Center the image */
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
