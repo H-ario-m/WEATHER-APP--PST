@@ -11,12 +11,31 @@ const box5 = document.getElementById('box5');
 let map;
 let marker; 
 
-
 map = L.map(box3).setView([20.5937, 78.9629], 5); 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
 }).addTo(map);
 
+const customIcons = {
+    '01d': 'icons/clear-day.png',
+    '01n': 'icons/clear-night.png',
+    '02d': 'icons/few-clouds-day.png',
+    '02n': 'icons/few-clouds-night.png',
+    '03d': 'icons/scattered-clouds-day.png',
+    '03n': 'icons/scattered-cloud-night.png',
+    '04d': 'icons/broken-clouds.png',
+    '04n': 'icons/broken-clouds.png',
+    '09d': 'icons/sun-shower.png',
+    '09n': 'icons/night-shower.png',
+    '10d': 'icons/rain.png',
+    '10n': 'icons/rain.png',
+    '11d': 'icons/thunderstorm.png',
+    '11n': 'icons/thunderstorm.png',
+    '13d': 'icons/snow.png',
+    '13n': 'icons/snow.png',
+    '50d': 'icons/mist-day.png',
+    '50n': 'icons/mist-night.png',
+};
 
 function getCurrentLocation() {
     if (navigator.geolocation) {
@@ -36,8 +55,6 @@ function getCurrentLocation() {
         alert("Geolocation is not supported by this browser.");
     }
 }
-
-
 
 function setMarker(lat, lon) {
     if (marker) {
@@ -59,12 +76,12 @@ async function fetchWeatherData(cityName) {
             setMarker(data.coord.lat, data.coord.lon); 
             fetchHourlyAndDailyForecast(data.coord.lat, data.coord.lon); 
             fetchAirQualityAndMoonPhase(data.coord.lat, data.coord.lon);
-            } else {
-          window.location.href = 'error.html';
+        } else {
+            throw new Error(data.message || 'Failed to fetch weather data');
         }
     } catch (error) {
         console.error('Error fetching weather data:', error);
-     window.location.href ='error.html';
+        box1.innerHTML = '<p>Error fetching weather data. Please try again.</p>';
     }
 }
 
@@ -90,6 +107,7 @@ async function fetchAirQualityAndMoonPhase(lat, lon) {
         box2.innerHTML = '<p>Error fetching air quality data.</p>';
     }
 }
+
 function getAQIDescription(aqi) {
     if (aqi === 1) return 'Good 🟢';
     if (aqi === 2) return 'Fair 🟡';
@@ -110,7 +128,6 @@ function getMoonPhase() {
     if (phase < 0.75) return 'Waxing Gibbous 🌔';
     return 'Full Moon 🌕';
 }
-
 
 async function fetchWeatherByCoordinates(lat, lon) {
     try {
@@ -153,6 +170,9 @@ async function fetchHourlyAndDailyForecast(lat, lon) {
 }
 
 function displayWeather(data) {
+    const iconCode = data.weather[0].icon;
+    const customIcon = customIcons[iconCode] || 'icons/default.png'; 
+
     box1.innerHTML = `
         <h3>${data.name}</h3>
         <br><br>
@@ -162,7 +182,7 @@ function displayWeather(data) {
         <br><br>
         <p><b>Humidity:</b> ${data.main.humidity}%</p>
         <br><br>
-        <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon">
+        <img src="${customIcon}" alt="Weather Icon" height="90px">
     `;
 }
 
@@ -174,12 +194,15 @@ function displayHourlyForecast(data) {
     data.list.slice(0, 8).forEach(hourData => {
         const date = new Date(hourData.dt * 1000);
         const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const iconCode = hourData.weather[0].icon;
+        const customIcon = customIcons[iconCode] || 'assets/icons/default.png';
+
         const forecastBlock = `
             <div>
             <br>
                 <p>${formattedTime}</p>
                 <p>${hourData.main.temp}°C</p>
-                <img src="https://openweathermap.org/img/wn/${hourData.weather[0].icon}@2x.png" alt="Weather Icon">
+                <img src="${customIcon}" alt="Weather Icon">
             </div>
         `;
         hourlyContainer.innerHTML += forecastBlock;
@@ -205,11 +228,13 @@ function displayDailyForecast(data) {
 
     Object.keys(dailyData).slice(0, 8).forEach(day => {
         const avgTemp = dailyData[day].temp.reduce((a, b) => a + b) / dailyData[day].temp.length;
+        const customIcon = customIcons[dailyData[day].icon] || 'assets/icons/default.png';
+
         dailyContainer.innerHTML += `
             <div class="daily-card">
                 <p>${day}</p>
                 <p>${avgTemp.toFixed(1)}°C</p>
-                <img src="https://openweathermap.org/img/wn/${dailyData[day].icon}@2x.png" alt="Weather Icon">
+                <img src="${customIcon}" alt="Weather Icon">
             </div>
         `;
     });
@@ -236,7 +261,6 @@ citySearch.addEventListener('keydown', (event) => {
         }
     }
 });
-
 
 map.on('click', async function (e) {
     const lat = e.latlng.lat;
