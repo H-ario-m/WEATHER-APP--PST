@@ -26,6 +26,7 @@ body {
     justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
+    margin-top: 30px;
 }
 
 input[type="text"] {
@@ -227,3 +228,28 @@ button:hover {
     margin: 5px 0;
 }
 
+@media (max-width: 768px) {
+  .grid {
+      grid-template-columns: 1fr; 
+  }
+  
+  .main-section {
+      grid-template-rows: auto; 
+  }
+
+  .hourly-forecast div {
+      flex: 0 0 80px; 
+  }
+
+  input[type="text"] {
+      width: 100%; 
+  }
+
+  button {
+      width: 100%;
+  }
+
+  .forecast-grid {
+      grid-template-columns: repeat(1, 1fr);
+  }
+}
