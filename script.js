@@ -213,7 +213,7 @@ function displayHourlyForecast(data) {
 }
 
 function displayDailyForecast(data) {
-    box5.innerHTML = '<h3>8-Day Forecast</h3>';
+    box5.innerHTML = '<h3>6-Day Forecast</h3>';
     const dailyContainer = document.createElement('div');
     dailyContainer.className = 'forecast-grid';
 
