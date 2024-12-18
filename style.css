@@ -11,8 +11,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-   
-    background-image: url('Customizable Weather Station Monitoring UI Design, Tablets, and Desktops - Free Do (Community) (2).png'); /* Update the path */
+    background-image: url('Customizable Weather Station Monitoring UI Design, Tablets, and Desktops - Free Do (Community) (2).png');
     background-size: cover;
     background-position: center;
     color: #fff;
@@ -107,6 +106,7 @@ button:hover {
     gap: 15px; 
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    scroll-behavior: smooth;
 }
 
 .hourly-forecast div {
@@ -130,13 +130,33 @@ button:hover {
   }
 
   .hourly-forecast div img {
-    max-width: 70px;
+    max-width: 50px;
     margin-top: 10px;
 }
 
-.hourly-forecast div p:first-child {
-    font-weight: 600;
+.hourly-forecast div p {
     font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+
+.hourly-forecast::-webkit-scrollbar {
+  height: 10px; 
+}
+
+.hourly-forecast::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 10px;
+}
+
+.hourly-forecast::-webkit-scrollbar-thumb {
+  background: rgba(255, 140, 0, 0.8); 
+  border-radius: 10px;
+}
+
+.hourly-forecast::-webkit-scrollbar-thumb:hover {
+  background: rgba(224, 126, 0, 1); 
 }
 
 #box5 h3 {
