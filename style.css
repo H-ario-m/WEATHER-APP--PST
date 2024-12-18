@@ -12,6 +12,14 @@ body {
     justify-content: center;
     align-items: center;
     /* min-height: 100vh; */
+
+    background-image: url('Customizable Weather Station Monitoring UI Design, Tablets, and Desktops - Free Do (Community) (2).png'); /* Update the path */
+    background-size: cover; /* Cover the entire viewport */
+    background-position: center; /* Center the image */
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {

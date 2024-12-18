@@ -77,11 +77,13 @@ async function fetchWeatherData(cityName) {
             fetchHourlyAndDailyForecast(data.coord.lat, data.coord.lon); 
             fetchAirQualityAndMoonPhase(data.coord.lat, data.coord.lon);
         } else {
-         window.location.href='error.html';
+
+          window.location.href='error.html'
         }
     } catch (error) {
         console.error('Error fetching weather data:', error);
-     window.location.href='error.html';
+        window.location.href='error.html'
+
     }
 }
 
