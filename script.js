@@ -101,7 +101,7 @@ async function fetchAirQualityAndMoonPhase(lat, lon) {
             <h3>Air Quality & Moon Phase</h3>
             <div class="air-quality-grid">
                 <div class="air-quality-item"><p><strong>Air Quality Index:</strong> ${aqi}</p></div>
-                <div class="air-quality-item"><p><strong>Condition:</strong> ${aqiDescription}</p></div>
+                <div class="air-quality-item"><p><strong>Condition:</strong> ${aqiDescription}/5</p></div>
                 <div class="air-quality-item"><p><strong>Moon Phase:</strong> ${moonPhase}</p></div>
             </div>
         `;
@@ -184,7 +184,7 @@ function displayWeather(data) {
         <br><br>
         <p><b>Humidity:</b> ${data.main.humidity}%</p>
         <br><br>
-        <img src="${customIcon}" alt="Weather Icon" height="90px">
+        <img src="${customIcon}" alt="Weather Icon" height="80px">
     `;
 }
 
