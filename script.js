@@ -100,8 +100,8 @@ async function fetchAirQualityAndMoonPhase(lat, lon) {
         box2.innerHTML = `
             <h3>Air Quality & Moon Phase</h3>
             <div class="air-quality-grid">
-                <div class="air-quality-item"><p><strong>Air Quality Index:</strong> ${aqi}</p></div>
-                <div class="air-quality-item"><p><strong>Condition:</strong> ${aqiDescription}/5</p></div>
+                <div class="air-quality-item"><p><strong>Air Quality Index:</strong> ${aqi} /5</p></div>
+                <div class="air-quality-item"><p><strong>Condition:</strong> ${aqiDescription}</p></div>
                 <div class="air-quality-item"><p><strong>Moon Phase:</strong> ${moonPhase}</p></div>
             </div>
         `;
