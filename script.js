@@ -1,21 +1,52 @@
-
 const API_KEY = '3fa916b42bfce07d8483560a882561ad';
 
 const citySearch = document.getElementById('city');
 const searchBtn = document.getElementById('search-btn');
-const box1 = document.getElementById('box1'); 
-const box2 = document.getElementById('box2'); 
-const box3 = document.getElementById('box3'); 
-const box4 = document.getElementById('box4'); 
-const box5 = document.getElementById('forecast-grid'); 
-const mapDiv = document.createElement('div'); 
+const box1 = document.getElementById('box1');
+const box2 = document.getElementById('box2');
+const box3 = document.getElementById('box3');
+const box4 = document.getElementById('box4');
+const box5 = document.getElementById('box5'); 
 
 let map;
+let marker; 
+
 
 map = L.map(box3).setView([20.5937, 78.9629], 5); 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
 }).addTo(map);
+
+
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                setMarker(lat, lon); 
+                fetchWeatherByCoordinates(lat, lon);
+                map.setView([lat, lon], 13); 
+            },
+            () => {
+                alert("Unable to retrieve your location.");
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+
+
+function setMarker(lat, lon) {
+    if (marker) {
+        marker.setLatLng([lat, lon]);
+    } else {
+        marker = L.marker([lat, lon]).addTo(map); 
+    }
+    map.setView([lat, lon], 14); 
+}
 
 async function fetchWeatherData(cityName) {
     try {
@@ -25,31 +56,15 @@ async function fetchWeatherData(cityName) {
         const data = await response.json();
         if (response.ok) {
             displayWeather(data);
-            fetchHourlyAndDailyForecast(data.coord.lat, data.coord.lon);
+            setMarker(data.coord.lat, data.coord.lon); 
+            fetchHourlyAndDailyForecast(data.coord.lat, data.coord.lon); 
             fetchAirQualityAndMoonPhase(data.coord.lat, data.coord.lon);
-        } else {
+            } else {
             throw new Error(data.message || 'Failed to fetch weather data');
         }
     } catch (error) {
         console.error('Error fetching weather data:', error);
         box1.innerHTML = '<p>Error fetching weather data. Please try again.</p>';
-    }
-}
-
-async function fetchHourlyAndDailyForecast(lat, lon) {
-    try {
-        const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
-        );
-        const data = await response.json();
-        if (response.ok) {
-            displayHourlyForecast(data);
-            displayDailyForecast(data);
-        } else {
-            throw new Error(data.message || 'Failed to fetch forecast data');
-        }
-    } catch (error) {
-        box4.innerHTML = '<p>Error fetching forecast data.</p>';
     }
 }
 
@@ -96,9 +111,51 @@ function getMoonPhase() {
     return 'Full Moon 🌕';
 }
 
+
+async function fetchWeatherByCoordinates(lat, lon) {
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+        );
+        const data = await response.json();
+        if (response.ok) {
+            displayWeather(data);
+            setMarker(lat, lon); 
+            fetchHourlyAndDailyForecast(lat, lon);
+            fetchAirQualityAndMoonPhase(lat, lon); 
+            citySearch.value = data.name; 
+        } else {
+            throw new Error(data.message || 'Failed to fetch weather data');
+        }
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        box1.innerHTML = '<p>Error fetching weather data. Please try again.</p>';
+    }
+}
+
+async function fetchHourlyAndDailyForecast(lat, lon) {
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+        );
+        const data = await response.json();
+        if (response.ok) {
+            displayHourlyForecast(data);
+            displayDailyForecast(data);
+        } else {
+            throw new Error(data.message || 'Failed to fetch forecast data');
+        }
+    } catch (error) {
+        console.error('Error fetching forecast data:', error);
+        box4.innerHTML = '<p>Error fetching forecast data. Please try again.</p>';
+        box5.innerHTML = '<p>Error fetching daily forecast. Please try again.</p>';
+    }
+}
+
 function displayWeather(data) {
     box1.innerHTML = `
         <h3>${data.name}</h3>
+        <br><br>
         <p><b>Temperature:</b> ${data.main.temp}°C</p>
         <br><br>
         <p><b>Condition:</b> ${data.weather[0].description}</p>
@@ -110,21 +167,23 @@ function displayWeather(data) {
 }
 
 function displayHourlyForecast(data) {
-    box4.innerHTML = '<h3>Hourly Forecast</h3>';
+    box4.innerHTML = '<h3>Hourly Forecast:</h3>';
     const hourlyContainer = document.createElement('div');
     hourlyContainer.className = 'hourly-forecast';
 
     data.list.slice(0, 8).forEach(hourData => {
-        const time = new Date(hourData.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        hourlyContainer.innerHTML += `
+        const date = new Date(hourData.dt * 1000);
+        const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const forecastBlock = `
             <div>
-                <p>${time}</p>
+            <br>
+                <p>${formattedTime}</p>
                 <p>${hourData.main.temp}°C</p>
                 <img src="https://openweathermap.org/img/wn/${hourData.weather[0].icon}@2x.png" alt="Weather Icon">
             </div>
         `;
+        hourlyContainer.innerHTML += forecastBlock;
     });
-
     box4.appendChild(hourlyContainer);
 }
 
@@ -167,7 +226,22 @@ searchBtn.addEventListener('click', () => {
     }
 });
 
-map.on('click', async (e) => {
-    const { lat, lng } = e.latlng;
-    fetchWeatherByCoordinates(lat, lng);
+citySearch.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        const cityName = citySearch.value.trim();
+        if (cityName) {
+            fetchWeatherData(cityName);
+        } else {
+            box1.innerHTML = '<p>Please enter a city name.</p>';
+        }
+    }
 });
+
+
+map.on('click', async function (e) {
+    const lat = e.latlng.lat;
+    const lon = e.latlng.lng;
+    fetchWeatherByCoordinates(lat, lon);
+});
+
+getCurrentLocation();
